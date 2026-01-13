@@ -94,7 +94,7 @@ export const VOCAB_DATA: VocabItem[] = [
   { id: 'v75', word: 'ETHICAL', meaning: 'Relating to moral principles.', synonyms: ['Moral', 'Right'], antonyms: ['Unethical', 'Immoral'] },
   { id: 'v76', word: 'OBSTINATE', meaning: 'Stubbornly refusing to change one\'s opinion.', synonyms: ['Stubborn', 'Headstrong'], antonyms: ['Flexible', 'Compliant'] },
   { id: 'v77', word: 'NOTORIOUS', meaning: 'Famous or well known, typically for some bad quality.', synonyms: ['Infamous', 'Scandalous'], antonyms: ['Anonymous', 'Unknown'] },
-  { id: 'v78', word: 'CHARISMA', meaning: 'Compelling attractiveness or charm.', synonyms: ['Charm', 'Appeal'], antonyms: ['Repulsion', 'Dullness'] }
+  { id: 'v78', word: 'CHARISMA', meaning: 'Compelling attractiveness or charm.', synonyms: ['Charm', 'Appeal'], antonyms: ['Repulsion', 'Dullness'] },
   { id: 'v79', word: 'EMPATHY', meaning: 'The ability to understand the feelings of others.', synonyms: ['Compassion', 'Understanding'], antonyms: ['Apathy', 'Indifference'] },
   { id: 'v80', word: 'HOSTILE', meaning: 'Unfriendly; antagonistic.', synonyms: ['Aggressive', 'Unkind'], antonyms: ['Friendly', 'Welcoming'] },
   { id: 'v81', word: 'CONSEQUENCE', meaning: 'A result or effect of an action.', synonyms: ['Result', 'Outcome'], antonyms: ['Cause', 'Source'] },
