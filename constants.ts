@@ -1,3 +1,4 @@
+
 import { VocabItem } from './types';
 
 // --- GAME CONSTANTS ---
@@ -13,9 +14,7 @@ export const CANVAS_HEIGHT = 600;
 
 // --- VOCABULARY DATA (1-1001) ---
 
-// Combined, Deduplicated, and Refined
-
-export const VOCAB_DATA: VocabItem[] = [
+export const FULL_VOCAB_POOL: VocabItem[] = [
   // --- PART 1: AWARENESS & FINANCE (1-100) ---
   { id: 'v1', word: 'ABANDON', meaning: 'To leave completely and finally.', synonyms: ['Desert', 'Forsake'], antonyms: ['Stay', 'Remain'] },
   { id: 'v2', word: 'BENEVOLENT', meaning: 'Well meaning and kindly.', synonyms: ['Kind', 'Generous'], antonyms: ['Malevolent', 'Cruel'] },
@@ -121,7 +120,7 @@ export const VOCAB_DATA: VocabItem[] = [
   // --- PART 2: RIGHTS, LOGIC & SAFETY (101-200) ---
   { id: 'v101', word: 'WARRANTY', meaning: 'A written guarantee promising to repair/replace.', synonyms: ['Guarantee', 'Promise'], antonyms: ['Disclaimer', 'Refusal'] },
   { id: 'v102', word: 'REFUND', meaning: 'Repayment of a sum of money.', synonyms: ['Rebate', 'Repayment'], antonyms: ['Penalty', 'Charge'] },
-  { id: 'v103', word: 'INVOICE', meaning: 'A list of goods sent or services provided.', synonyms: ['Bill', 'Statement'], antonyms: ['Payment', 'Receipt'] }
+  { id: 'v103', word: 'INVOICE', meaning: 'A list of goods sent or services provided.', synonyms: ['Bill', 'Statement'], antonyms: ['Payment', 'Receipt'] },
   { id: 'v104', word: 'RETAIL', meaning: 'Sale of goods to the public for use.', synonyms: ['Selling', 'Trade'], antonyms: ['Wholesale', 'Buying'] },
   { id: 'v105', word: 'WHOLESALE', meaning: 'Selling goods in large quantities at low cost.', synonyms: ['Bulk', 'Trade'], antonyms: ['Retail', 'Small-scale'] },
   { id: 'v106', word: 'BARGAIN', meaning: 'An agreement between two or more parties.', synonyms: ['Deal', 'Steal'], antonyms: ['Rip-off', 'Overcharge'] },
@@ -149,7 +148,7 @@ export const VOCAB_DATA: VocabItem[] = [
   { id: 'v128', word: 'HYPOTHESIS', meaning: 'A proposed explanation made with limited evidence.', synonyms: ['Theory', 'Proposition'], antonyms: ['Fact', 'Proof'] },
   { id: 'v129', word: 'RELEVANT', meaning: 'Closely connected or appropriate to the matter.', synonyms: ['Pertinent', 'Applicable'], antonyms: ['Irrelevant', 'Unrelated'] },
   { id: 'v130', word: 'VAGUE', meaning: 'Of uncertain, indefinite, or unclear character.', synonyms: ['Unclear', 'Hazy'], antonyms: ['Clear', 'Definite'] },
-  { id: 'v131', word: 'TOLERATE', meaning: 'Allow the existence of something without interference.', synonyms: ['Endure', 'Accept'], antonyms: ['Forbid', 'Prohibit'] }
+  { id: 'v131', word: 'TOLERATE', meaning: 'Allow the existence of something without interference.', synonyms: ['Endure', 'Accept'], antonyms: ['Forbid', 'Prohibit'] },
   { id: 'v132', word: 'PROVOKE', meaning: 'Stimulate or give rise to a reaction.', synonyms: ['Instigate', 'Trigger'], antonyms: ['Calm', 'Soothe'] },
   { id: 'v133', word: 'ESCALATE', meaning: 'Increase rapidly.', synonyms: ['Intensify', 'Rise'], antonyms: ['De-escalate', 'Decrease'] },
   { id: 'v134', word: 'RESOLVE', meaning: 'Settle or find a solution to.', synonyms: ['Solve', 'Fix'], antonyms: ['Complicate', 'Worsen'] },
@@ -180,7 +179,7 @@ export const VOCAB_DATA: VocabItem[] = [
   { id: 'v159', word: 'FILTER', meaning: 'Process or assess items to reject unwanted ones.', synonyms: ['Screen', 'Sift'], antonyms: ['Mix', 'Combine'] },
   { id: 'v160', word: 'ACCESS', meaning: 'The means or opportunity to approach or enter.', synonyms: ['Entry', 'Admission'], antonyms: ['Exit', 'Ejection'] },
   { id: 'v161', word: 'HAZARD', meaning: 'A danger or risk.', synonyms: ['Danger', 'Peril'], antonyms: ['Safety', 'Security'] },
-  { id: 'v162', word: 'CAUTION', meaning: 'Care taken to avoid danger or mistakes.', synonyms: ['Care', 'Wariness'], antonyms: ['Recklessness', 'Haste'] }
+  { id: 'v162', word: 'CAUTION', meaning: 'Care taken to avoid danger or mistakes.', synonyms: ['Care', 'Wariness'], antonyms: ['Recklessness', 'Haste'] },
   { id: 'v163', word: 'EVACUATE', meaning: 'Remove someone from a place of danger.', synonyms: ['Remove', 'Clear'], antonyms: ['Occupy', 'Fill'] },
   { id: 'v164', word: 'TOXIC', meaning: 'Poisonous.', synonyms: ['Poisonous', 'Harmful'], antonyms: ['Harmless', 'Safe'] },
   { id: 'v165', word: 'POTABLE', meaning: 'Safe to drink.', synonyms: ['Drinkable', 'Clean'], antonyms: ['Undrinkable', 'Dirty'] },
@@ -664,7 +663,7 @@ export const VOCAB_DATA: VocabItem[] = [
   { id: 'v633', word: 'DRAW THE LINE', meaning: 'Set a limit on what one will accept.', synonyms: ['Limit', 'Restrict'], antonyms: ['Allow', 'Permit'] },
   { id: 'v634', word: 'ROCK THE BOAT', meaning: 'Disrupt an existing situation.', synonyms: ['Disturb', 'Disrupt'], antonyms: ['Calm', 'Stabilize'] },
   { id: 'v635', word: 'BEND THE RULES', meaning: 'Interpret rules loosely to suit oneself.', synonyms: ['Cheat', 'Adjust'], antonyms: ['Obey', 'Follow'] },
-  { id: 'v636', word: 'TURN THE TABLES', meaning: 'Reverse one\'s position relative to another.', synonyms: ['Reverse', 'Flip'], antonyms: ['Stay', 'Lose'] }
+  { id: 'v636', word: 'TURN THE TABLES', meaning: 'Reverse one\'s position relative to another.', synonyms: ['Reverse', 'Flip'], antonyms: ['Stay', 'Lose'] },
   { id: 'v637', word: 'BURN THE CANDLE', meaning: 'Work or do other things from early to late.', synonyms: ['Overwork', 'Exhaust'], antonyms: ['Rest', 'Relax'] },
   { id: 'v638', word: 'FACE THE MUSIC', meaning: 'Confront the unpleasant consequences.', synonyms: ['Confront', 'Accept'], antonyms: ['Avoid', 'Hide'] },
   { id: 'v639', word: 'BURY THE HATCHET', meaning: 'End a quarrel or conflict.', synonyms: ['Forgive', 'Peace'], antonyms: ['Fight', 'Feud'] },
@@ -773,7 +772,7 @@ export const VOCAB_DATA: VocabItem[] = [
   { id: 'v740', word: 'WALK THE LINE', meaning: 'Maintain an intermediate position.', synonyms: ['Balance', 'Care'], antonyms: ['Fall', 'Fail'] },
   { id: 'v741', word: 'NICK OF TIME', meaning: 'Only just in time.', synonyms: ['Just', 'Barely'], antonyms: ['Late', 'Missed'] },
   { id: 'v742', word: 'AGAINST THE CLOCK', meaning: 'In a great hurry to finish.', synonyms: ['Rushed', 'Hurried'], antonyms: ['Relaxed', 'Slow'] },
-  { id: 'v743', word: 'BIDEO ONE TIME', meaning: 'Wait for a favorable opportunity.', synonyms: ['Wait', 'Patience'], antonyms: ['Rush', 'Act'] },
+  { id: 'v743', word: 'BIDE ONE TIME', meaning: 'Wait for a favorable opportunity.', synonyms: ['Wait', 'Patience'], antonyms: ['Rush', 'Act'] },
   { id: 'v744', word: 'ON THE DOT', meaning: 'Exactly on time.', synonyms: ['Prompt', 'Sharp'], antonyms: ['Late', 'Early'] },
   { id: 'v745', word: 'CALL IT QUITS', meaning: 'Agree to stop doing something.', synonyms: ['Stop', 'End'], antonyms: ['Continue', 'Persist'] },
   { id: 'v746', word: 'DAY IN DAY OUT', meaning: 'Every single day (monotonous).', synonyms: ['Daily', 'Constant'], antonyms: ['Rare', 'Once'] },
