@@ -22,27 +22,25 @@ export default function App() {
   return (
     <Layout>
       {mode === GameMode.MENU && (
-        <div className="h-full w-full flex flex-col items-center justify-center p-4 sm:p-8 space-y-6 sm:space-y-12 bg-[radial-gradient(circle_at_center,_#111_0%,_#000_100%)]">
-          <div className="text-center space-y-2 sm:space-y-4">
-            <h1 className="text-3xl sm:text-5xl md:text-7xl text-yellow-500 font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] animate-pulse tracking-tighter">
-              GNOME SMASH
+        <div className="h-full w-full flex flex-col items-center justify-center p-4 sm:p-8 bg-[#0a0a0c]">
+          <div className="text-center space-y-4 sm:space-y-6 mb-8 sm:mb-12">
+            <div className="text-blue-500 text-[8px] sm:text-[10px] font-bold tracking-[0.4em] uppercase opacity-60">System Ready</div>
+            <h1 className="text-4xl sm:text-7xl text-yellow-500 font-black tracking-tighter leading-tight">
+              GNOME<br/><span className="text-white">SMASH</span>
             </h1>
-            <p className="text-green-400 text-[8px] sm:text-xs md:text-sm tracking-[0.3em] uppercase font-bold opacity-80">THE MISCHIEVOUS ENGLISH ARCADE</p>
+            <p className="text-zinc-500 text-[8px] sm:text-[10px] tracking-[0.3em] sm:tracking-[0.4em] uppercase font-bold pt-2 sm:pt-4">Vocabulary Recovery Protocol</p>
           </div>
 
-          <div className="w-full max-w-[280px] sm:max-w-md px-2">
+          <div className="w-full max-w-sm space-y-4">
             <button 
               onClick={() => handleStart(GameMode.VOCAB_SMASH)}
-              className="w-full bg-blue-900 border-2 sm:border-4 border-blue-700 p-4 sm:p-10 hover:bg-blue-800 hover:border-white transition-all group flex flex-col items-center shadow-[0_4px_0_rgb(29,78,216)] sm:shadow-[0_8px_0_rgb(29,78,216)] active:shadow-none active:translate-y-1 sm:active:translate-y-2 rounded"
+              className="w-full bg-zinc-100 hover:bg-white text-black font-black py-6 sm:py-8 rounded flex flex-col items-center justify-center transition-colors shadow-lg active:scale-95 transform"
             >
-              <span className="text-2xl sm:text-5xl mb-2 sm:mb-4 group-hover:scale-110 transition-transform">📚</span>
-              <span className="text-sm sm:text-xl font-bold text-white mb-1 sm:mb-2 tracking-widest">INSERT COIN / START</span>
-              <span className="text-[7px] sm:text-[10px] text-blue-300 uppercase opacity-70">Tap or Click to Play</span>
+              <span className="text-sm sm:text-lg tracking-widest uppercase">Start Session</span>
             </button>
-          </div>
-
-          <div className="text-[7px] sm:text-[11px] text-zinc-600 max-w-[240px] sm:max-w-md text-center leading-relaxed font-mono uppercase bg-zinc-950/50 p-2 sm:p-4 rounded border border-zinc-800/30">
-            "Watch the prompt at the top. smash the right brick. avoid the devilish gnomes or face their curses!"
+            <div className="text-[7px] sm:text-[9px] text-zinc-600 text-center font-mono uppercase tracking-widest pt-2 sm:pt-4 opacity-50">
+              Recovery sequence initialized
+            </div>
           </div>
         </div>
       )}
@@ -52,32 +50,40 @@ export default function App() {
       )}
 
       {mode === GameMode.SUMMARY && (
-        <div className="h-full w-full flex flex-col items-center justify-center p-4 sm:p-10 bg-black/90 backdrop-blur-md">
-           <h2 className="text-xl sm:text-4xl text-yellow-400 mb-4 sm:mb-8 font-black tracking-tighter">GAME OVER</h2>
+        <div className="h-full w-full flex flex-col items-center justify-center p-4 sm:p-8 bg-[#0a0a0c]">
+           <div className="text-center mb-6 sm:mb-10">
+             <h2 className="text-2xl sm:text-4xl text-white font-black tracking-tight uppercase">Session Complete</h2>
+           </div>
            
-           <div className="bg-zinc-900/80 border-2 sm:border-4 border-green-800 p-4 sm:p-10 w-full max-w-[320px] sm:max-w-lg text-center space-y-4 sm:space-y-8 shadow-2xl">
-              <div className="space-y-1">
-                <div className="text-zinc-500 text-[8px] sm:text-xs mb-1 uppercase tracking-widest font-bold">Final Arcade Score</div>
-                <div className="text-3xl sm:text-6xl text-white font-black font-mono">{finalScore.toString().padStart(6, '0')}</div>
+           <div className="bg-[#121218] border border-zinc-800 p-6 sm:p-10 w-full max-w-2xl text-center space-y-8 sm:space-y-12 rounded shadow-xl">
+              <div className="space-y-2 sm:space-y-4">
+                <span className="text-zinc-600 text-[8px] sm:text-[9px] uppercase tracking-[0.4em] font-bold block">Final Score</span>
+                <div className="text-4xl sm:text-7xl text-yellow-500 font-black font-mono">
+                  {finalScore.toLocaleString()}
+                </div>
               </div>
 
-              <div className="border-t border-zinc-800 pt-4 sm:pt-8">
-                 <div className="text-green-500 text-[8px] sm:text-xs mb-2 uppercase font-bold">Gnome's Parting Wisdom:</div>
-                 <div className="text-[9px] sm:text-sm leading-relaxed text-zinc-400 italic bg-black/40 p-3 sm:p-5 rounded border border-zinc-800">
+              <div className="bg-black/50 p-4 sm:p-6 rounded border border-zinc-800">
+                 <span className="text-blue-500 text-[8px] sm:text-[9px] mb-2 sm:mb-3 uppercase font-bold tracking-[0.3em] block">Recovery Log</span>
+                 <div className="text-xs sm:text-base leading-relaxed text-zinc-400 italic">
                    "{takeaway}"
                  </div>
               </div>
 
-              <button 
-                onClick={() => setMode(GameMode.MENU)}
-                className="w-full bg-yellow-600 hover:bg-yellow-500 text-black font-bold p-3 sm:p-5 text-xs sm:text-base border-b-4 border-yellow-900 active:translate-y-1 transition-all rounded uppercase"
-              >
-                RETURN TO ARCADE
-              </button>
-           </div>
-           
-           <div className="mt-6 sm:mt-10 text-[6px] sm:text-[10px] text-zinc-700 tracking-[0.4em] font-bold uppercase">
-             CREATED BY SHALAKA KASHIKAR
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <button 
+                  onClick={() => setMode(GameMode.MENU)}
+                  className="flex-1 bg-zinc-200 hover:bg-white text-black font-black py-4 sm:py-5 rounded transition-all uppercase tracking-widest text-[10px] sm:text-xs active:scale-95 transform"
+                >
+                  Restart
+                </button>
+                <button 
+                  onClick={() => window.location.reload()}
+                  className="px-6 sm:px-8 bg-zinc-900 hover:bg-zinc-800 text-zinc-500 font-bold py-4 sm:py-5 rounded border border-zinc-800 transition-all uppercase tracking-widest text-[8px] sm:text-[10px]"
+                >
+                  System Reset
+                </button>
+              </div>
            </div>
         </div>
       )}

@@ -2,7 +2,9 @@
 import React from 'react';
 
 interface LayoutProps {
-  children: React.ReactNode;
+  // Fix: Making children optional resolves "Property 'children' is missing in type '{}'" 
+  // errors in some JSX/TypeScript environments when elements are passed as nested children.
+  children?: React.ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {

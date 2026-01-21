@@ -13,7 +13,16 @@ export interface VocabItem {
   antonyms: string[];
 }
 
-export type GnomeType = 'GNOME' | 'DEVIL';
+export type GnomeType = 'GNOME' | 'DEVIL' | 'SPEEDY';
+
+export interface FloatingText {
+  id: string;
+  x: number;
+  y: number;
+  text: string;
+  color: string;
+  life: number;
+}
 
 export interface LearningPopup {
   id: string;
@@ -51,6 +60,7 @@ export interface Brick {
   isTarget: boolean;
   type: 'vocab' | 'sentence';
   hits: number;
+  maxHits: number;
 }
 
 export interface Ball {
