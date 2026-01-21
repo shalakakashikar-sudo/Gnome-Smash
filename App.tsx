@@ -31,6 +31,10 @@ export default function App() {
     setMode(GameMode.SUMMARY);
   };
 
+  const handleQuit = () => {
+    setMode(GameMode.MENU);
+  };
+
   const performSystemReset = () => {
     setIsResetting(true);
     setBootLogIndex(0);
@@ -98,7 +102,7 @@ export default function App() {
       )}
 
       {mode === GameMode.VOCAB_SMASH && !isResetting && (
-        <GameEngine mode={mode} onGameOver={handleGameOver} />
+        <GameEngine mode={mode} onGameOver={handleGameOver} onQuit={handleQuit} />
       )}
 
       {mode === GameMode.SUMMARY && !isResetting && (

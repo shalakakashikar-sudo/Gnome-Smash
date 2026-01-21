@@ -47,9 +47,10 @@ interface Ripple {
 interface GameEngineProps {
   mode: GameMode;
   onGameOver: (score: number, takeaway: string) => void;
+  onQuit: () => void;
 }
 
-export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
+export default function GameEngine({ mode, onGameOver, onQuit }: GameEngineProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
@@ -158,10 +159,8 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
     const bHeight = 65;
     const offX = 80;
     const offY = 80;
-    const maxAvailableWidth = CANVAS_WIDTH - offX * 2;
 
     const pool = [...FULL_VOCAB_POOL].sort(() => Math.random() - 0.5);
-    // Aim for ~15 bricks per level
     const items = pool.slice(0, 15);
 
     let currentX = offX;
@@ -169,10 +168,8 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
 
     bricksRef.current = items.map((item) => {
       const isReinforced = Math.random() > 0.8;
-      // Calculate width based on word length. 12px per char + 40px padding.
       const calculatedWidth = (item.word.length * 12) + 40;
 
-      // Flow wrap logic: if brick doesn't fit in current row, wrap to next.
       if (currentX + calculatedWidth > CANVAS_WIDTH - offX) {
         currentX = offX;
         currentY += bHeight + paddingY;
@@ -210,6 +207,7 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
     paddleRef.current.x = CANVAS_WIDTH / 2 - paddleRef.current.width / 2;
     Object.keys(effectStateRef.current).forEach(k => (effectStateRef.current as any)[k] = 0);
     ballCaughtRef.current = false;
+    gnomesRef.current = [];
     popupsRef.current = [];
     particlesRef.current = [];
     ripplesRef.current = [];
@@ -227,11 +225,29 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
   useEffect(() => {
     const handleDown = (e: KeyboardEvent) => { 
       keysRef.current[e.code] = true; 
+      
+      // Pause Toggles
+      if(e.code === 'KeyP' || e.code === 'Escape') {
+        if (!levelStarting) setIsPaused(prev => !prev);
+      }
+
+      // Space Bar Logic
       if(e.code === 'Space') {
         if (isPaused && !levelStarting) setIsPaused(false);
         else if (ballCaughtRef.current) ballCaughtRef.current = false;
       }
+
+      // Restart Level
+      if(e.code === 'KeyR') {
+        initLevel();
+      }
+
+      // Quit Game
+      if(e.code === 'KeyQ') {
+        onQuit();
+      }
     };
+    
     const handleUp = (e: KeyboardEvent) => { keysRef.current[e.code] = false; };
     
     const handleMove = (e: MouseEvent | TouchEvent) => {
@@ -271,7 +287,7 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
         canvas.removeEventListener('touchstart', handleAction);
       }
     };
-  }, [isPaused, levelStarting]);
+  }, [isPaused, levelStarting, initLevel, onQuit]);
 
   const update = () => {
     if (isPaused || levelStarting) return;
@@ -283,8 +299,13 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
 
     const isReversed = e.reverse > 0;
     const paddleSpeed = 16;
-    if (keysRef.current['ArrowLeft']) p.x -= isReversed ? -paddleSpeed : paddleSpeed;
-    if (keysRef.current['ArrowRight']) p.x += isReversed ? -paddleSpeed : paddleSpeed;
+    
+    // Support Arrow keys and A/D
+    const moveLeft = keysRef.current['ArrowLeft'] || keysRef.current['KeyA'];
+    const moveRight = keysRef.current['ArrowRight'] || keysRef.current['KeyD'];
+
+    if (moveLeft) p.x -= isReversed ? -paddleSpeed : paddleSpeed;
+    if (moveRight) p.x += isReversed ? -paddleSpeed : paddleSpeed;
     p.x = Math.max(0, Math.min(CANVAS_WIDTH - p.width, p.x));
 
     b.trail.push({ x: b.x, y: b.y, alpha: 0.6 });
@@ -296,7 +317,6 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
         b.y = p.y - b.radius - 2;
         b.dx = 0; b.dy = -INITIAL_BALL_SPEED;
     } else {
-        // Magnet effect
         if (e.magnet > 0) {
             const centerX = p.x + p.width / 2;
             const diffX = centerX - b.x;
@@ -370,7 +390,7 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
             const gType = rand > 0.9 ? 'SPEEDY' : (rand > 0.8 ? 'DEVIL' : 'GNOME');
             gnomesRef.current.push({
               id: Math.random().toString(), x: brick.x + brick.width / 2, y: brick.y - 10,
-              vx: (Math.random() - 0.5) * 6, vy: -5, // Slight jump up
+              vx: (Math.random() - 0.5) * 6, vy: -5,
               type: gType, state: 'falling', timer: 0, bounceCount: 0, laughTimer: 0, rotation: 0
             });
             setShake(3);
@@ -403,7 +423,7 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
 
     gnomesRef.current.forEach((g, idx) => {
       if (g.state === 'bursting') { g.timer--; if (g.timer <= 0) gnomesRef.current.splice(idx, 1); return; }
-      g.vy += 0.2; // Gravity
+      g.vy += 0.2;
       g.y += g.vy; g.x += g.vx; g.rotation += g.vx * 0.05;
       if (g.x < 0 || g.x > CANVAS_WIDTH - 50) g.vx *= -1;
       
@@ -451,8 +471,6 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
       if (shake > 0) ctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       
-      // Softer dark background with subtle nebula pulse
-      const time = Date.now() * 0.0005;
       const grad = ctx.createRadialGradient(CANVAS_WIDTH/2, CANVAS_HEIGHT/2, 0, CANVAS_WIDTH/2, CANVAS_HEIGHT/2, CANVAS_WIDTH);
       grad.addColorStop(0, '#0a0a14');
       grad.addColorStop(1, '#050508');
@@ -484,7 +502,6 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
         ctx.shadowBlur = 0;
 
         ctx.fillStyle = isReinforced ? '#94a3b8' : '#d1d5db'; ctx.font = 'bold 12px "Press Start 2P"'; ctx.textAlign = 'center';
-        // Removed substring truncation - brick size now matches word length
         const text = brick.content;
         ctx.fillText(text, brick.x + brick.width / 2, brick.y + brick.height / 2 + 5);
       });
@@ -524,11 +541,15 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
         ctx.fillStyle = '#fbbf24'; ctx.font = '32px "Press Start 2P"'; ctx.textAlign = 'center';
         ctx.fillText(`SECTOR ${level}`, CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
       } else if (isPaused) {
-        ctx.fillStyle = 'rgba(0,0,0,0.75)'; ctx.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        ctx.fillStyle = 'rgba(0,0,0,0.85)'; ctx.fillRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
         ctx.fillStyle = '#fbbf24'; ctx.font = '28px "Press Start 2P"'; ctx.textAlign = 'center';
-        ctx.fillText('GNOME SMASH', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 20);
-        ctx.fillStyle = '#d1d5db'; ctx.font = '10px "Press Start 2P"';
-        ctx.fillText('TAP SCREEN TO RESUME', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 40);
+        ctx.fillText('PAUSED', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 - 40);
+        
+        // Command Hints
+        ctx.fillStyle = '#d1d5db'; ctx.font = '9px "Press Start 2P"';
+        ctx.fillText('PRESS [P] TO RESUME', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 10);
+        ctx.fillText('PRESS [R] TO RESTART SECTOR', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 40);
+        ctx.fillText('PRESS [Q] TO QUIT TO MENU', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 70);
       }
       ctx.restore();
       animationFrameId = requestAnimationFrame(render);
@@ -561,7 +582,6 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
         
         <div className="flex-1 flex justify-center w-full sm:px-6 relative">
           <div className="bg-[#050508] border border-zinc-800 px-4 sm:px-8 py-2 sm:py-3 rounded text-center w-full max-w-lg relative overflow-hidden">
-             {/* Level Progress Bar Background */}
              <div className="absolute bottom-0 left-0 h-1 bg-blue-900/50 w-full" />
              <div className="absolute bottom-0 left-0 h-1 bg-blue-500 transition-all duration-500" style={{ width: `${levelProgress * 100}%` }} />
              
@@ -601,7 +621,7 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
       {/* Footer Feed */}
       <div className="w-full bg-[#121218] h-10 sm:h-12 flex items-center px-6 sm:px-10 border-t border-zinc-800 shrink-0">
         <div className="text-[9px] sm:text-[11px] text-zinc-400 font-mono tracking-wider uppercase truncate">
-          <span className="opacity-40 mr-2">LOG:</span> {learningLog}
+          <span className="opacity-40 mr-2">LOG:</span> {learningLog} | [P] PAUSE | [R] RESTART | [Q] QUIT
         </div>
       </div>
     </div>
