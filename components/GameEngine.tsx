@@ -151,26 +151,38 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
 
   const initLevel = useCallback(() => {
     setLevelStarting(true);
-    const cols = 5; 
-    const rows = 3; 
-    const paddingX = 60; 
-    const paddingY = 40;
-    const availableW = CANVAS_WIDTH - 160;
-    const bWidth = (availableW - (cols - 1) * paddingX) / cols;
+    
+    // Layout parameters
+    const paddingX = 40; 
+    const paddingY = 30;
     const bHeight = 65;
-    const offX = (CANVAS_WIDTH - (cols * bWidth + (cols - 1) * paddingX)) / 2;
-    const offY = 100;
+    const offX = 80;
+    const offY = 80;
+    const maxAvailableWidth = CANVAS_WIDTH - offX * 2;
 
     const pool = [...FULL_VOCAB_POOL].sort(() => Math.random() - 0.5);
-    const items = pool.slice(0, Math.min(cols * rows, pool.length));
+    // Aim for ~15 bricks per level
+    const items = pool.slice(0, 15);
 
-    bricksRef.current = items.map((item, i) => {
+    let currentX = offX;
+    let currentY = offY;
+
+    bricksRef.current = items.map((item) => {
       const isReinforced = Math.random() > 0.8;
-      return {
+      // Calculate width based on word length. 12px per char + 40px padding.
+      const calculatedWidth = (item.word.length * 12) + 40;
+
+      // Flow wrap logic: if brick doesn't fit in current row, wrap to next.
+      if (currentX + calculatedWidth > CANVAS_WIDTH - offX) {
+        currentX = offX;
+        currentY += bHeight + paddingY;
+      }
+
+      const brick: Brick = {
         id: item.id,
-        x: offX + (i % cols) * (bWidth + paddingX),
-        y: offY + Math.floor(i / cols) * (bHeight + paddingY),
-        width: bWidth,
+        x: currentX,
+        y: currentY,
+        width: calculatedWidth,
         height: bHeight,
         active: true,
         content: item.word,
@@ -179,6 +191,9 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
         hits: isReinforced ? 2 : 1,
         maxHits: isReinforced ? 2 : 1
       };
+
+      currentX += calculatedWidth + paddingX;
+      return brick;
     });
 
     refreshTarget();
@@ -469,7 +484,8 @@ export default function GameEngine({ mode, onGameOver }: GameEngineProps) {
         ctx.shadowBlur = 0;
 
         ctx.fillStyle = isReinforced ? '#94a3b8' : '#d1d5db'; ctx.font = 'bold 12px "Press Start 2P"'; ctx.textAlign = 'center';
-        const text = brick.content.length > 11 ? brick.content.substring(0, 8) + ".." : brick.content;
+        // Removed substring truncation - brick size now matches word length
+        const text = brick.content;
         ctx.fillText(text, brick.x + brick.width / 2, brick.y + brick.height / 2 + 5);
       });
       particlesRef.current.forEach(p => { ctx.globalAlpha = p.life * 0.7; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size); });

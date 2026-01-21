@@ -1,13 +1,25 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './components/Layout.tsx';
 import GameEngine from './components/GameEngine.tsx';
 import { GameMode } from './types.ts';
+
+const BOOT_LOGS = [
+  "INITIALIZING HARDWARE...",
+  "WIPING VOCAB_CACHE.DAT...",
+  "RESETTING SECTOR_PROGRESS...",
+  "FLUSHING GNOME_HEURISTICS...",
+  "CALIBRATING PADDLE_INTERFACE...",
+  "SYSTEM CORE STABLE.",
+  "REBOOTING..."
+];
 
 export default function App() {
   const [mode, setMode] = useState<GameMode>(GameMode.MENU);
   const [finalScore, setFinalScore] = useState(0);
   const [takeaway, setTakeaway] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
+  const [bootLogIndex, setBootLogIndex] = useState(-1);
 
   const handleStart = (m: GameMode) => {
     setMode(m);
@@ -19,9 +31,49 @@ export default function App() {
     setMode(GameMode.SUMMARY);
   };
 
+  const performSystemReset = () => {
+    setIsResetting(true);
+    setBootLogIndex(0);
+    // Explicitly reset all game state
+    setFinalScore(0);
+    setTakeaway('');
+    
+    // Simulate a terminal boot sequence
+    const interval = setInterval(() => {
+      setBootLogIndex(prev => {
+        if (prev >= BOOT_LOGS.length - 1) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setIsResetting(false);
+            setMode(GameMode.MENU);
+            setBootLogIndex(-1);
+          }, 500);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 200);
+  };
+
   return (
     <Layout>
-      {mode === GameMode.MENU && (
+      {/* Reset Sequence Overlay */}
+      {isResetting && (
+        <div className="absolute inset-0 z-[100] bg-black flex flex-col items-center justify-center p-6 font-mono">
+          <div className="w-full max-w-md space-y-2">
+            {BOOT_LOGS.slice(0, bootLogIndex + 1).map((log, i) => (
+              <div key={i} className="text-emerald-500 text-[10px] sm:text-xs tracking-wider">
+                <span className="opacity-50">[{new Date().toLocaleTimeString()}]</span> {log}
+              </div>
+            ))}
+            {bootLogIndex < BOOT_LOGS.length - 1 && (
+              <div className="w-2 h-4 bg-emerald-500 animate-pulse inline-block ml-1" />
+            )}
+          </div>
+        </div>
+      )}
+
+      {mode === GameMode.MENU && !isResetting && (
         <div className="h-full w-full flex flex-col items-center justify-center p-4 sm:p-8 bg-[#0a0a0c]">
           <div className="text-center space-y-4 sm:space-y-6 mb-8 sm:mb-12">
             <div className="text-blue-500 text-[8px] sm:text-[10px] font-bold tracking-[0.4em] uppercase opacity-60">System Ready</div>
@@ -45,11 +97,11 @@ export default function App() {
         </div>
       )}
 
-      {mode === GameMode.VOCAB_SMASH && (
+      {mode === GameMode.VOCAB_SMASH && !isResetting && (
         <GameEngine mode={mode} onGameOver={handleGameOver} />
       )}
 
-      {mode === GameMode.SUMMARY && (
+      {mode === GameMode.SUMMARY && !isResetting && (
         <div className="h-full w-full flex flex-col items-center justify-center p-4 sm:p-8 bg-[#0a0a0c]">
            <div className="text-center mb-6 sm:mb-10">
              <h2 className="text-2xl sm:text-4xl text-white font-black tracking-tight uppercase">Session Complete</h2>
@@ -66,7 +118,7 @@ export default function App() {
               <div className="bg-black/50 p-4 sm:p-6 rounded border border-zinc-800">
                  <span className="text-blue-500 text-[8px] sm:text-[9px] mb-2 sm:mb-3 uppercase font-bold tracking-[0.3em] block">Recovery Log</span>
                  <div className="text-xs sm:text-base leading-relaxed text-zinc-400 italic">
-                   "{takeaway}"
+                   "{takeaway || "No data recorded."}"
                  </div>
               </div>
 
@@ -75,10 +127,10 @@ export default function App() {
                   onClick={() => setMode(GameMode.MENU)}
                   className="flex-1 bg-zinc-200 hover:bg-white text-black font-black py-4 sm:py-5 rounded transition-all uppercase tracking-widest text-[10px] sm:text-xs active:scale-95 transform"
                 >
-                  Restart
+                  Menu
                 </button>
                 <button 
-                  onClick={() => window.location.reload()}
+                  onClick={performSystemReset}
                   className="px-6 sm:px-8 bg-zinc-900 hover:bg-zinc-800 text-zinc-500 font-bold py-4 sm:py-5 rounded border border-zinc-800 transition-all uppercase tracking-widest text-[8px] sm:text-[10px]"
                 >
                   System Reset
